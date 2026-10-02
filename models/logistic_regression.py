@@ -40,7 +40,7 @@ def run_logistic_regression(X_train_processed, X_test_processed, y_train, y_test
     roc_auc = roc_auc_score(y_test, y_prob)
     print("ROC_AUC Score:", roc_auc)
 
-    fpr, tpr, thresholds = roc_curve(y_test, y_prob, pos_label = "Yes")
+    fpr, tpr, _ = roc_curve(y_test, y_prob, pos_label = "Yes")
     plt.plot(fpr, tpr)
     plt.xlabel("False Positive Rate")
     plt.ylabel("True Positive Rate")
