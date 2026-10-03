@@ -36,7 +36,8 @@ def run_decision_tree(X_train_processed, X_test_processed, y_train, y_test):
     print("\nUnconstrained Decision Tree F1-Score:", unconstrained_f1)
 
     model_y_prob = model.predict_proba(X_test_processed)[:, 1]
-    print("Unconstrained Decision Tree ROC-AUC:", roc_auc_score(y_test, model_y_prob))
+    unconstrained_roc_auc = roc_auc_score(y_test, model_y_prob)
+    print("Unconstrained Decision Tree ROC-AUC:", unconstrained_roc_auc)
 
     # Compare training and test accuracy to assess overfitting
     train_accuracy = model.score(X_train_processed, y_train)
@@ -138,7 +139,8 @@ def run_decision_tree(X_train_processed, X_test_processed, y_train, y_test):
     print("\nPruned Decision Tree F1-Score:", pruned_f1)
 
     pruned_y_prob = pruned_model.predict_proba(X_test_processed)[:, 1]
-    print("\nPruned Decision Tree ROC-AUC:", roc_auc_score(y_test, pruned_y_prob))
+    pruned_roc_auc = roc_auc_score(y_test, pruned_y_prob)
+    print("\nPruned Decision Tree ROC-AUC:", pruned_roc_auc)
 
     fpr, tpr, _ = roc_curve(y_test, pruned_y_prob, pos_label = "Yes")
     plt.plot(fpr, tpr, label = "Pruned Decision Tree")
@@ -150,3 +152,15 @@ def run_decision_tree(X_train_processed, X_test_processed, y_train, y_test):
     plt.title("ROC Curve - Pruned Decision Tree")
     plt.legend()
     plt.show()
+
+    comparison = pd.DataFrame({
+            "Metric": ["Accuracy", "Precision", "Recall", "F1-Score", "ROC-AUC"],
+            "unconstrained": [unconstrained_accuracy, unconstrained_precision, unconstrained_recall, unconstrained_f1, unconstrained_roc_auc],
+            "pruned": [pruned_accuracy, pruned_precision, pruned_recall, pruned_f1, pruned_roc_auc]
+        })
+    
+    comparison["unconstrained"] = comparison["unconstrained"] * 100
+    comparison["pruned"] = comparison["pruned"] * 100
+    
+    print("\nUnconstrained vs Pruned Decision Tree:")
+    print(comparison.to_string(index = False, float_format = "%.2f%%"))
