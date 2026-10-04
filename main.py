@@ -4,6 +4,7 @@ from preprocessing import preprocess_data
 from models.logistic_regression import run_logistic_regression
 from models.decision_tree import run_decision_tree
 from models.random_forest import run_random_forest
+from models.xgboost import run_xgboost
 
 df = pd.read_csv(
     "data/Telco-Customer-Churn.csv"
@@ -82,5 +83,5 @@ print(X_test_processed.shape)
 print(X_train_processed[:5])
 
 run_decision_tree(X_train_processed, X_test_processed, y_train, y_test)
-
 run_random_forest(X_train_processed, X_test_processed, y_train, y_test)
+run_xgboost(X_train_processed, X_test_processed, y_train, y_test)

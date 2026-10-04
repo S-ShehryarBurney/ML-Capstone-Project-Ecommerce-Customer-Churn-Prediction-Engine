@@ -87,9 +87,6 @@ def run_random_forest(X_train_processed, X_test_processed, y_train, y_test):
     final_y_pred = final_model.predict(X_test_processed)
 
     # Evaluations
-    final_y_pred = final_model.predict(X_test_processed)
-
-    # Evaluations
     final_accuracy = accuracy_score(y_test, final_y_pred)
     print("\nFinal Random Forest Accuracy:", final_accuracy)
 
