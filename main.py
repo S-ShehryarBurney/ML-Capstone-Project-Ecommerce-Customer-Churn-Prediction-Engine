@@ -75,13 +75,59 @@ for column in df.select_dtypes(include = "str").columns:
 
 X_train_processed, X_test_processed, y_train, y_test = preprocess_data(df)
 
-run_logistic_regression(X_train_processed, X_test_processed, y_train, y_test)
+logistic_results = run_logistic_regression(X_train_processed, X_test_processed, y_train, y_test)
 
 print(X_train_processed.shape)
 print(X_test_processed.shape)
 
 print(X_train_processed[:5])
 
-run_decision_tree(X_train_processed, X_test_processed, y_train, y_test)
-run_random_forest(X_train_processed, X_test_processed, y_train, y_test)
-run_xgboost(X_train_processed, X_test_processed, y_train, y_test)
+decision_tree_results = run_decision_tree(X_train_processed, X_test_processed, y_train, y_test)
+random_forest_results = run_random_forest(X_train_processed, X_test_processed, y_train, y_test)
+xgboost_results = run_xgboost(X_train_processed, X_test_processed, y_train, y_test)
+
+# table to compare the final performance of all models
+final_model_comparison = pd.DataFrame({
+    "Metrics": ["Accuracy", "Precision", "Recall", "F1-Score", "ROC-AUC"],
+    "Logistic L1": [
+        logistic_results["L1"]["accuracy"],
+        logistic_results["L1"]["precision"],
+        logistic_results["L1"]["recall"],
+        logistic_results["L1"]["f1"],
+        logistic_results["L1"]["roc_auc"]
+    ],
+    "Logistic L2": [
+        logistic_results["L2"]["accuracy"],
+        logistic_results["L2"]["precision"],
+        logistic_results["L2"]["recall"],
+        logistic_results["L2"]["f1"],
+        logistic_results["L2"]["roc_auc"]
+    ],
+    "Pruned Decision Tree": [
+        decision_tree_results["pruned"]["accuracy"],
+        decision_tree_results["pruned"]["precision"],
+        decision_tree_results["pruned"]["recall"],
+        decision_tree_results["pruned"]["f1"],
+        decision_tree_results["pruned"]["roc_auc"]
+    ],
+    "Random Forest": [
+        random_forest_results["final"]["accuracy"],
+        random_forest_results["final"]["precision"],
+        random_forest_results["final"]["recall"],
+        random_forest_results["final"]["f1"],
+        random_forest_results["final"]["roc_auc"]
+    ],
+    "XGBoost": [
+        xgboost_results["final"]["accuracy"],
+        xgboost_results["final"]["precision"],
+        xgboost_results["final"]["recall"],
+        xgboost_results["final"]["f1"],
+        xgboost_results["final"]["roc_auc"]
+    ]
+})
+
+# convert model metric values from decimals to percentages
+final_model_comparison.iloc[:, 1:] = final_model_comparison.iloc[:, 1:] * 100
+
+print("\nFinal Models Comparison:")
+print(final_model_comparison.to_string(index = False, float_format = "{:.2f}".format))

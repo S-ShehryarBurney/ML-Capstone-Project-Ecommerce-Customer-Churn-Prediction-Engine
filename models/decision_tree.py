@@ -1,4 +1,4 @@
-import pandas as pd
+#import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.tree import DecisionTreeClassifier
 
@@ -153,14 +153,20 @@ def run_decision_tree(X_train_processed, X_test_processed, y_train, y_test):
     plt.legend()
     plt.show()
 
-    comparison = pd.DataFrame({
-            "Metric": ["Accuracy", "Precision", "Recall", "F1-Score", "ROC-AUC"],
-            "unconstrained": [unconstrained_accuracy, unconstrained_precision, unconstrained_recall, unconstrained_f1, unconstrained_roc_auc],
-            "pruned": [pruned_accuracy, pruned_precision, pruned_recall, pruned_f1, pruned_roc_auc]
-        })
+    return{
+        "unconstrained": {
+            "accuracy": unconstrained_accuracy,
+            "precision": unconstrained_precision,
+            "recall": unconstrained_recall,
+            "f1": unconstrained_f1,
+            "roc_auc": unconstrained_roc_auc
+        },
     
-    comparison["unconstrained"] = comparison["unconstrained"] * 100
-    comparison["pruned"] = comparison["pruned"] * 100
-    
-    print("\nUnconstrained vs Pruned Decision Tree:")
-    print(comparison.to_string(index = False, float_format = "%.2f%%"))
+        "pruned": {
+            "accuracy": pruned_accuracy,
+            "precision": pruned_precision,
+            "recall": pruned_recall,
+            "f1": pruned_f1,
+            "roc_auc": pruned_roc_auc
+        }
+    }

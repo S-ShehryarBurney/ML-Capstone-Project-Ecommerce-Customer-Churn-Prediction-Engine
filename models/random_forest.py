@@ -1,4 +1,4 @@
-import pandas as pd
+#import pandas as pd
 import matplotlib.pyplot as plt
 
 from sklearn.ensemble import RandomForestClassifier
@@ -39,7 +39,8 @@ def run_random_forest(X_train_processed, X_test_processed, y_train, y_test):
     print("\nBaseline Random Forest F1-Score:", baseline_f1)
 
     baseline_y_prob = model.predict_proba(X_test_processed)[:, 1]
-    print("\nBaseline Random Forest ROC-AUC:", roc_auc_score(y_test, baseline_y_prob))
+    baseline_roc_auc = roc_auc_score(y_test, baseline_y_prob)
+    print("\nBaseline Random Forest ROC-AUC:", baseline_roc_auc)
 
     # Comparing training and test accuracy
     train_accuracy = model.score(X_train_processed, y_train)
@@ -115,14 +116,20 @@ def run_random_forest(X_train_processed, X_test_processed, y_train, y_test):
     plt.legend()
     plt.show()
 
-    comparison = pd.DataFrame({
-            "Metric": ["Accuracy", "Precision", "Recall", "F1-Score", "ROC-AUC"],
-            "Baseline": [baseline_accuracy, baseline_precision, baseline_recall, baseline_f1, roc_auc_score(y_test, baseline_y_prob)],
-            "Final": [final_accuracy, final_precision, final_recall, final_f1, final_roc_auc_score]
-        })
+    return{
+        "baseline": {
+            "accuracy": baseline_accuracy,
+            "precision": baseline_precision,
+            "recall": baseline_recall,
+            "f1": baseline_f1,
+            "roc_auc": baseline_roc_auc
+        },
     
-    comparison["Baseline"] = comparison["Baseline"] * 100
-    comparison["Final"] = comparison["Final"] * 100
-    
-    print("\nBaseline vs Final Random Forest:")
-    print(comparison.to_string(index = False, float_format = "%.2f%%"))
+        "final": {
+            "accuracy": final_accuracy,
+            "precision": final_precision,
+            "recall": final_recall,
+            "f1": final_f1,
+            "roc_auc": final_roc_auc_score
+        }
+    }

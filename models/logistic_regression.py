@@ -1,4 +1,4 @@
-import pandas as pd
+#import pandas as pd
 import matplotlib.pyplot as plt
 
 from sklearn.linear_model import LogisticRegression
@@ -110,15 +110,21 @@ def run_logistic_regression(X_train_processed, X_test_processed, y_train, y_test
     L2_roc_auc = roc_auc_score(y_test, L2_y_prob)
     print("L2 ROC_AUC Score:", L2_roc_auc)
 
-    comparison = pd.DataFrame({
-        "Metric": ["Accuracy", "Precision", "Recall", "F1-Score", "ROC-AUC"],
-        "L1": [L1_accuracy, L1_precision, L1_recall, L1_f1, L1_roc_auc],
-        "L2": [L2_accuracy, L2_precision, L2_recall, L2_f1, L2_roc_auc]
-    })
+    return{
+        "L1": {
+            "accuracy": L1_accuracy,
+            "precision": L1_precision,
+            "recall": L1_recall,
+            "f1": L1_f1,
+            "roc_auc": L1_roc_auc
+        },
 
-    comparison["L1"] = comparison["L1"] * 100
-    comparison["L2"] = comparison["L2"] * 100
-
-    print("\nL1 vs L2 Logistic Regression:")
-    print(comparison.to_string(index = False, float_format = "%.2f%%"))
+        "L2": {
+            "accuracy": L2_accuracy,
+            "precision": L2_precision,
+            "recall": L2_recall,
+            "f1": L2_f1,
+            "roc_auc": L2_roc_auc
+        }
+    }
     

@@ -1,4 +1,4 @@
-import pandas as pd
+#import pandas as pd
 import matplotlib.pyplot as plt
 
 from xgboost import XGBClassifier
@@ -118,19 +118,21 @@ def run_xgboost(X_train_processed, X_test_processed, y_train, y_test):
     plt.legend()
     plt.show()
 
-    comparison = pd.DataFrame({
-        "Metric": ["Accuracy", "Precision", "Recall", "F1-Score", "ROC-AUC"],
-        "Baseline": [base_accuracy, base_precision, base_recall, base_f1, base_roc_auc],
-        "Final": [final_accuracy, final_precision, final_recall, final_f1, final_roc_auc]
-    })
+    return{
+        "base": {
+        "accuracy": base_accuracy,
+        "precision": base_precision,
+        "recall": base_recall,
+        "f1": base_f1,
+        "roc_auc": base_roc_auc
+        },
+        
+        "final": {
+            "accuracy": final_accuracy,
+            "precision": final_precision,
+            "recall": final_recall,
+            "f1": final_f1,
+            "roc_auc": final_roc_auc
+        }
+    }
 
-    comparison["Baseline"] = comparison["Baseline"] * 100
-    comparison["Final"] = comparison["Final"] * 100
-
-    print("\nBaseline vs Final XGBoost")
-
-    # using format method
-    print(comparison.to_string(index = False, float_format = "{:.2f}%".format))
-
-    # used .format method because the original format string caused a TypeError
-    # print(comparison.to_string(index = False, float_format = "%.2f%%"))
