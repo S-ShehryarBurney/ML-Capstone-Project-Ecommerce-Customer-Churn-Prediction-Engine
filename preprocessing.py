@@ -7,25 +7,31 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.compose import ColumnTransformer
 from sklearn.model_selection import train_test_split
 
-def preprocess_data(df):
-    df = df.copy() # Create a copy of the original DataFrame to avoid modifying it directly
+def clean_features(df):
+    df = df.copy()
 
     # Replace the blanks with 0 and then convert to numeric
     df["TotalCharges"] = df["TotalCharges"].replace(" ", 0)
     df["TotalCharges"] = pd.to_numeric(df["TotalCharges"])
-
+    
     print("\nTotalCharges Data Type after Cleaning:")
     print(df["TotalCharges"].dtype)
-
+    
     print("\nRemaining Blank TotalCharges:")
     print((df["TotalCharges"] == " ").sum())
-
+    
     print("\nTotalCharges of Previous Blank Rows:")
     print(df.loc[df["tenure"] == 0, "TotalCharges"])
-    
+        
     # SeniorCitizen treated as categorical instead of numerical
     df["SeniorCitizen"] = df["SeniorCitizen"].astype("str")
 
+    return df
+
+def preprocess_data(df):
+
+    df = clean_features(df)
+    
     # Separate target from features
     X = df.drop(["Churn", "customerID"], axis = 1)
     y = df["Churn"]
