@@ -14,19 +14,35 @@ def clean_features(df):
     df["TotalCharges"] = df["TotalCharges"].replace(" ", 0)
     df["TotalCharges"] = pd.to_numeric(df["TotalCharges"])
     
-    print("\nTotalCharges Data Type after Cleaning:")
-    print(df["TotalCharges"].dtype)
+    #print("\nTotalCharges Data Type after Cleaning:")
+    #print(df["TotalCharges"].dtype)
     
-    print("\nRemaining Blank TotalCharges:")
-    print((df["TotalCharges"] == " ").sum())
+    #print("\nRemaining Blank TotalCharges:")
+    #print((df["TotalCharges"] == " ").sum())
     
-    print("\nTotalCharges of Previous Blank Rows:")
-    print(df.loc[df["tenure"] == 0, "TotalCharges"])
+    #print("\nTotalCharges of Previous Blank Rows:")
+    #print(df.loc[df["tenure"] == 0, "TotalCharges"])
         
     # SeniorCitizen treated as categorical instead of numerical
     df["SeniorCitizen"] = df["SeniorCitizen"].astype("str")
 
     return df
+
+def build_preprocessor(numerical_columns, categorical_columns):
+    numerical_pipeline = Pipeline([
+        ("imputer", SimpleImputer(strategy = "mean")),
+        ("scaler", StandardScaler())
+    ])
+
+    categorical_pipeline = Pipeline([
+        ("imputer", SimpleImputer(strategy = "most_frequent")),
+        ("encoder", OneHotEncoder(handle_unknown = "ignore"))
+    ])
+
+    return ColumnTransformer([
+        ("num", numerical_pipeline, numerical_columns),
+        ("cat", categorical_pipeline, categorical_columns)
+    ])
 
 def preprocess_data(df):
 
@@ -40,21 +56,7 @@ def preprocess_data(df):
     numerical_columns = X.select_dtypes(include = ['int64', 'float64']).columns
     categorical_columns = X.select_dtypes(include = 'str').columns
 
-    # Pipelines (Numerical and Categorical)
-    numerical_pipeline = Pipeline([
-        ("imputer", SimpleImputer(strategy = "mean")),
-        ("scaler", StandardScaler())
-    ])
-
-    categorical_pipeline = Pipeline([
-        ("imputer", SimpleImputer(strategy = "most_frequent")),
-        ("encoder", OneHotEncoder(handle_unknown = "ignore"))
-    ])
-
-    preprocessor = ColumnTransformer([
-        ("num", numerical_pipeline, numerical_columns),
-        ("cat", categorical_pipeline, categorical_columns)
-    ])
+    preprocessor = build_preprocessor(numerical_columns, categorical_columns)
 
     # train test split, stratify = y because the target is imbalanced
     X_train, X_test, y_train, y_test = train_test_split(
