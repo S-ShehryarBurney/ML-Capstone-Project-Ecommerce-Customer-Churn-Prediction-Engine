@@ -264,6 +264,18 @@ def show_single_customer_mode(model_name):
     probability_col, model_col = st.columns(2)
     probability_col.metric("Churn probability", f"{probability:.1%}")
     model_col.metric("Selected model", next(label for label, key in MODEL_OPTIONS.items() if key == model_name))
+    risk_split = pd.DataFrame(
+        {"Churn risk": [probability], "No churn": [1.0 - probability]},
+        index=["Customer"],
+    )
+    st.bar_chart(
+        risk_split,
+        horizontal=True,
+        stack=True,
+        color=["#d94678", "#38bdf8"],
+        height=140,
+        alt="Customer churn risk split between churn risk and no churn",
+    )
 
 
 def show_batch_upload_mode(model_name):
@@ -287,6 +299,22 @@ def show_batch_upload_mode(model_name):
         return
 
     st.success(f"Predictions generated for {len(results):,} customer row(s).")
+    prediction_counts = (
+        results["Prediction"]
+        .value_counts()
+        .reindex(["Yes", "No"], fill_value=0)
+        .rename_axis("Prediction")
+        .reset_index(name="Customers")
+    )
+    st.bar_chart(
+        prediction_counts,
+        x="Prediction",
+        y="Customers",
+        horizontal=True,
+        color="#6366f1",
+        sort=False,
+        alt="Number of customers predicted Yes versus No",
+    )
     st.dataframe(results, use_container_width=True, hide_index=True)
     st.download_button(
         "Download prediction results",
